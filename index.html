@@ -121,7 +121,7 @@
     })
 
     ;['ArrowUp','ArrowLeft', 'ArrowDown', 'ArrowRight'].forEach(item => {
-      ;['mouseup', 'touchstop'].forEach(eventType => {
+      ;['mouseup', 'touchstop', 'touchend', 'touchcancel'].forEach(eventType => {
         document.getElementById(item).addEventListener(eventType, stopSound)
       })
     })

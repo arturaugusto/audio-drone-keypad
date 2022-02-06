@@ -112,15 +112,18 @@
       o.connect(g)
       g.connect(context.destination)
     }
-    
 
-    document.getElementById('ArrowUp').addEventListener('mousedown', () => playFreq(keyFrequenciesMap['ArrowUp']))
-    document.getElementById('ArrowDown').addEventListener('mousedown', () => playFreq(keyFrequenciesMap['ArrowDown']))
-    document.getElementById('ArrowLeft').addEventListener('mousedown', () => playFreq(keyFrequenciesMap['ArrowLeft']))
-    document.getElementById('ArrowRight').addEventListener('mousedown', () => playFreq(keyFrequenciesMap['ArrowRight']))
+    ;['mousedown', 'touchstart'].forEach(eventType => {
+      document.getElementById('ArrowUp').addEventListener(eventType, () => playFreq(keyFrequenciesMap['ArrowUp']))
+      document.getElementById('ArrowDown').addEventListener(eventType, () => playFreq(keyFrequenciesMap['ArrowDown']))
+      document.getElementById('ArrowLeft').addEventListener(eventType, () => playFreq(keyFrequenciesMap['ArrowLeft']))
+      document.getElementById('ArrowRight').addEventListener(eventType, () => playFreq(keyFrequenciesMap['ArrowRight']))
+    })
 
     ;['ArrowUp','ArrowLeft', 'ArrowDown', 'ArrowRight'].forEach(item => {
-      document.getElementById(item).addEventListener('mouseup', stopSound)
+      ;['mouseup', 'touchstop'].forEach(eventType => {
+        document.getElementById(item).addEventListener(eventType, stopSound)
+      })
     })
 
   </script>

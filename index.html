@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Audo Drone Keypad</title>
+  <style type="text/css">
+    html {
+      background: #191713;
+      font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+      font-size: 34px;
+      user-select: none;
+
+    }
+    .top {
+      height: 40vh;
+    }
+    .key {
+      display: flex;
+      align-items:center;
+      justify-content:center;
+      width: 33.33%;
+      height: 70px;
+      background: #2d2b27;
+      border: 3px dashed #a25d5d;
+      color: white;
+      border-radius: 8px;
+      margin: 4px;
+      cursor: pointer;
+    }
+    a:hover {
+      background-color: #43413e;
+    }
+    a:active, .is-down {
+      background-color: #353431;
+    }
+    @media all and (min-width: 800px) {
+      .keypad {
+        margin-left: 280px;
+        margin-right: 280px;
+      }
+    }
+    .hidden {
+      display: none;
+    }
+    .keypad {
+      height: 50 vh;
+    }
+    .row {
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="top">
+    <a class="key" id="start">Start!</a>
+  </div>
+  
+  <div class="keypad hidden">
+    <div class="row"><a class="key" id="ArrowUp">&#x2191;</a></div>
+    <div class="row"><a class="key" id="ArrowLeft">&#x2190;</a><a class="key" id="ArrowDown">&#x2193;</a><a class="key" id="ArrowRight">&#x2192;</a></div>
+  </div>
+
+  <script type="text/javascript">
+    const keyFrequenciesMap = {
+      'ArrowUp': 1076,
+      'ArrowDown': 1684,
+      'ArrowLeft': 1280,
+      'ArrowRight': 1477
+    }
+    
+    var context
+    var g
+    var o
+
+    const stopSound = () => {
+      g.gain.exponentialRampToValueAtTime(
+        0.00001, context.currentTime + 0.04
+      )
+    }
+    
+    document.getElementById('start').addEventListener('mousedown', (evt) => {
+      context = new AudioContext()
+      o = context.createOscillator()
+      o.start(0)
+      document.getElementsByClassName('keypad')[0].classList.remove('hidden')
+      evt.target.classList.add('hidden')
+      document.body.addEventListener('keydown', (evt) => {
+        if (keyFrequenciesMap[evt['key']]) {
+          let target = document.getElementById(evt['key'])
+          if (target.classList.contains('is-down')) return
+          target.classList.add('is-down')
+          playFreq(keyFrequenciesMap[evt['key']])
+        }
+      })
+      document.body.addEventListener('keyup', (evt) => {
+        if (keyFrequenciesMap[evt['key']]) {
+          document.getElementById(evt['key']).classList.remove('is-down')
+        }
+        stopSound()
+      })
+
+    })
+
+    let startTime
+    const playFreq = (freq) => {
+      if (g) stopSound()
+      startTime = context.currentTime
+      g = context.createGain()
+      o.frequency.value = freq
+      o.connect(g)
+      g.connect(context.destination)
+    }
+    
+
+    document.getElementById('ArrowUp').addEventListener('mousedown', () => playFreq(keyFrequenciesMap['ArrowUp']))
+    document.getElementById('ArrowDown').addEventListener('mousedown', () => playFreq(keyFrequenciesMap['ArrowDown']))
+    document.getElementById('ArrowLeft').addEventListener('mousedown', () => playFreq(keyFrequenciesMap['ArrowLeft']))
+    document.getElementById('ArrowRight').addEventListener('mousedown', () => playFreq(keyFrequenciesMap['ArrowRight']))
+
+    ;['ArrowUp','ArrowLeft', 'ArrowDown', 'ArrowRight'].forEach(item => {
+      document.getElementById(item).addEventListener('mouseup', stopSound)
+    })
+
+  </script>
+</body>
+</html>
